@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
@@ -28,6 +28,30 @@ currentUser$ = this.currentUserSource.asObservable();
         }
       }) 
     )
+  }
+
+  /*createUser(model: any)
+  {
+   this.http.post(this.baseUrl + 'users/register', model).pipe(
+    map((response: User))   )
+
+  }*/
+
+
+  getTokenForHttpHeader()
+  {
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+      return;
+    }
+    const user: User = JSON.parse(userString);
+
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + user.token })
+    };
+
+    return httpOptions
   }
 
   setCurrentUser(user: User)

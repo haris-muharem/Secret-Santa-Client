@@ -1,0 +1,28 @@
+<br>
+<br>
+<br>
+<h1 *ngIf="loggedIn" style="margin-left: 20px;">Create New User:</h1>
+
+<form *ngIf="loggedIn"   #loginForm="ngForm" class="input-form" (ngSubmit)="createUser()" autocomplete="off" >
+    <input 
+    name="firstName"
+    [(ngModel)]="newUser.firstName"
+    class="form-control me-2" 
+    type="text" 
+    placeholder="First name" >
+
+    <input 
+    name="lastName"
+    [(ngModel)]="newUser.lastName"
+    class="form-control me-2" 
+    type="text" 
+    placeholder="Last name" >
+    
+    <input 
+          name="email"
+          [(ngModel)]="newUser.email"
+          class="form-control me-2" 
+          type="text" 
+          placeholder="Email" >
+    <button class="btn btn-outline-success" type="submit">Create</button>
+  </form>

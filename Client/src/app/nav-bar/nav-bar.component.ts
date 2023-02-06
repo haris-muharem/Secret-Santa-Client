@@ -32,6 +32,7 @@ export class NavBarComponent implements OnInit {
         next: response => {
           console.log(response);
           this.loggedIn = true;
+          window.location.reload()//Za refresh nakon logovanja
         },
         error: error => console.log(error)
       })
@@ -41,6 +42,7 @@ export class NavBarComponent implements OnInit {
   {
     this.accountService.logout();
     this.loggedIn = false;
+    window.location.reload()//Za refresh nakon logovanja
   }
 
 }

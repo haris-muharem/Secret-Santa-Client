@@ -1,3 +1,7 @@
+<br>
+<br>
+<br>
+<br>
 <h1>Hi, {{loggedUser.fullName}}</h1>
 
-<h4>You should buy a present to: {{loggedUser.recepientFullName}}</h4>
+<h4 *ngIf="loggedUser.recepientFullName != 'Doesn\'t have recepient'">You should buy a present to: {{loggedUser.recepientFullName}}</h4>
