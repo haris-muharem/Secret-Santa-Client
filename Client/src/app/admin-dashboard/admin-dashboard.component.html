@@ -1,7 +1,7 @@
 <div class="container" style="margin-top: 100px;">
 
     <ul>
-        <li *ngFor="let user of users"> {{user.fullName}} buys present to: {{user.recepientFullName}}</li>
+        <li *ngFor="let user of users"> {{user.fullName}} <a *ngIf="user.recepientFullName != 'Doesn\'t have recepient'">buys present to:</a>  {{user.recepientFullName}}</li>
     </ul>
 
 </div>
