@@ -34,7 +34,7 @@ loggedIn = false;
 
 
 
-   return this.http.post('https://localhost:44361/api/users/register', this.newUser, httpOptions).subscribe(
+   return this.http.post('http://3.76.10.199/api/users/register', this.newUser, httpOptions).subscribe(
     {
       next: response => 
       {
