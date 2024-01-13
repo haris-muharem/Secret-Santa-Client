@@ -1,2 +1,2 @@
 # Secret-Santa-App-Client
-Frontend part of Secret-Santa-App
+Secret Santa App Frontend
