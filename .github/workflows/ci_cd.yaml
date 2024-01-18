@@ -36,10 +36,13 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build image
         run: |
           docker build -t secret-santa-frontend:${{ env.TAG }} .
-          docker push harisbegic01/secret-santa-frontend:${{ env.TAG }}
 
+      - name: Push image
+        run: |
+          docker images
+          docker push harisbegic01/secret-santa-frontend:${{ env.TAG }}
     
 
