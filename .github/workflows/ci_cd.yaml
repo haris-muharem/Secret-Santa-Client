@@ -11,6 +11,24 @@ jobs:
     environment: development
 
     steps:
+      - name: Set environment variables
+        run: |
+          echo "SHORT_COMMIT=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF##*/}-`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "GITHUB_ACTOR=${GITHUB_ACTOR}" >> $GITHUB_ENV
+          echo "JOB_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: Expose github environment as shell variables
+        env:
+         SECRETS_CONTEXT: ${{ toJson(secrets) }}
+         VARS_CONTEXT: ${{ toJson(vars) }}
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          to_envs() { jq -r "to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
+          echo "$SECRETS_CONTEXT" | to_envs >> $GITHUB_ENV
+          
       - name: Checkout code
         uses: actions/checkout@v2
 
