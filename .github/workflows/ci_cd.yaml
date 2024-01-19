@@ -45,6 +45,7 @@ jobs:
           docker push docker.io/harisbegic01/secret-santa-frontend:${{ env.TAG }}
           
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
     environment: development
 
