@@ -65,8 +65,8 @@ jobs:
           REMOTE_PORT: 22
           SCRIPT_AFTER: |
             TAG=${{ needs.build-and-push.outputs.tag }}
-            sudo docker stop secret-santa-frontend | true
-            sudo docker rm secret-santa-frontend | true
+            docker stop secret-santa-frontend | true
+            docker rm secret-santa-frontend | true
             docker images --format '{{.Repository}}:{{.Tag}}' | grep "secret-santa-frontend" | xargs docker rmi
-            sudo docker pull harisbegic01/secret-santa-frontend:$TAG
-            sudo docker run -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:$TAG
+            docker pull harisbegic01/secret-santa-frontend:$TAG
+            docker run -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:$TAG
