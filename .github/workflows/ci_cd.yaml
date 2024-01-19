@@ -64,11 +64,8 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_REMOTE_USER}}
           REMOTE_PORT: 22
           SCRIPT_AFTER: |
-            echo ${{ needs.build-and-push.outputs.tag }}
-            echo '----------------'
-            sudo docker ps -a
             sudo docker stop secret-santa-frontend | true
             sudo docker rm secret-santa-frontend | true
             sudo docker rmi harisbegic01/secret-santa-frontend | true
             sudo docker pull harisbegic01/secret-santa-frontend:${{ needs.build-and-push.outputs.tag }}
-            sudo docker start -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:$${{ needs.build-and-push.outputs.tag }}
+            sudo docker start -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:${{ needs.build-and-push.outputs.tag }}
