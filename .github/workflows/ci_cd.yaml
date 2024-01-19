@@ -58,6 +58,8 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_REMOTE_USER}}
           REMOTE_PORT: 22
           SCRIPT_AFTER: |
+            echo ${{env.TAG}}
+            echo '----------------'
             sudo docker ps -a
             sudo docker stop secret-santa-frontend | true
             sudo docker rm secret-santa-frontend | true
