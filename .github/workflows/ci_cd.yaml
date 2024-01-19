@@ -54,8 +54,8 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
-          REMOTE_HOST: "secret-santa"
-          REMOTE_USER: "ubuntu"
+          REMOTE_HOST: ${{ secrets.EC2_REMOTE_IP}}
+          REMOTE_USER: ${{ secrets.EC2_REMOTE_USER}}
           REMOTE_PORT: 22
           SCRIPT_AFTER: |
             docker ps -a
