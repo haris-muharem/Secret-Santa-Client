@@ -23,7 +23,7 @@ RUN ng build --configuration=development
 FROM nginx:alpine
 
 # Copy the built Angular app to the web server's directory
-COPY --from=build /app/dist/ /usr/share/nginx/html
+COPY --from=build /app/dist/client /usr/share/nginx/html
 
 # Expose port 4200
 EXPOSE 80
