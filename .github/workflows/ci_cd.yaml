@@ -9,6 +9,8 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     environment: development
+    outputs:
+      tag: ${{ steps.set_vars.outputs.tag }}
 
     steps:
       - name: Set environment variables
@@ -26,6 +28,10 @@ jobs:
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           to_envs() { jq -r "to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
           echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
+
+      - name: Set output
+        id: set_vars
+        run: echo "::set-output name=tag::${{ env.TAG }}"
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -58,11 +64,11 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_REMOTE_USER}}
           REMOTE_PORT: 22
           SCRIPT_AFTER: |
-            echo ${{env.TAG}}
+            echo ${{ needs.build-and-push.outputs.tag }}
             echo '----------------'
             sudo docker ps -a
             sudo docker stop secret-santa-frontend | true
             sudo docker rm secret-santa-frontend | true
             sudo docker rmi harisbegic01/secret-santa-frontend | true
-            sudo docker pull harisbegic01/secret-santa-frontend:${{ env.TAG }}
-            sudo docker start -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:${{ env.TAG }}
+            sudo docker pull harisbegic01/secret-santa-frontend:${{ needs.build-and-push.outputs.tag }}
+            sudo docker start -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:$${{ needs.build-and-push.outputs.tag }}
