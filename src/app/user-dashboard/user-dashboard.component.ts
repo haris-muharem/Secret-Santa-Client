@@ -32,7 +32,7 @@ getUserPair()
     };
 
 
-    return this.http.get('http://18.194.173.91/api/users/' + userId, httpOptions ).subscribe({
+    return this.http.get('http://localhost:8080/api/users/' + userId, httpOptions ).subscribe({
         next: response => this.loggedUser = response,
         error: error => console.log(error),
         complete: () => console.log('Request has completed')
