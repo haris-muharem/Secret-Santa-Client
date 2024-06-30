@@ -1,0 +1,72 @@
+name: CI/CD Pipeline for Frontend App
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: development
+    outputs:
+      tag: ${{ steps.set_vars.outputs.tag }}
+
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "SHORT_COMMIT=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF##*/}-`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "GITHUB_ACTOR=${GITHUB_ACTOR}" >> $GITHUB_ENV
+          echo "JOB_URL=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+      
+      - name: Expose github environment as shell variables
+        env:
+         SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          to_envs() { jq -r "to_entries[] | \"\(.key)<<$EOF\n\(.value)\n$EOF\n\""; }
+          echo "$VARS_CONTEXT" | to_envs >> $GITHUB_ENV
+
+      - name: Set output
+        id: set_vars
+        run: echo "::set-output name=tag::${{ env.TAG }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build image
+        run: |
+          docker build -t harisbegic01/secret-santa-frontend:${{ env.TAG }} .
+
+      - name: Push image
+        run: |
+          docker push docker.io/harisbegic01/secret-santa-frontend:${{ env.TAG }}
+          
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Deploy to EC2 instance
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+          REMOTE_HOST: ${{ secrets.EC2_REMOTE_IP}}
+          REMOTE_USER: ${{ secrets.EC2_REMOTE_USER}}
+          REMOTE_PORT: 22
+          SCRIPT_AFTER: |
+            TAG=${{ needs.build-and-push.outputs.tag }}
+            docker stop secret-santa-frontend | true
+            docker rm secret-santa-frontend | true
+            docker images --format '{{.Repository}}:{{.Tag}}' | grep "secret-santa-frontend" | xargs docker rmi
+            docker pull harisbegic01/secret-santa-frontend:$TAG
+            docker run -d -p 80:80 --name secret-santa-frontend harisbegic01/secret-santa-frontend:$TAG

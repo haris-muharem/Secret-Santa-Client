@@ -37,7 +37,7 @@ constructor(private http: HttpClient, private accountService: AccountService) { 
 
 
     // Here we make the requests to our API Server
-    this.http.get('http://3.76.10.199/api/users', this.accountService.getTokenForHttpHeader()).subscribe({
+    this.http.get('http://3.71.92.233:8080/api/users', this.accountService.getTokenForHttpHeader()).subscribe({
       next: response => this.users = response,
       error: error => console.log(error),
       complete: () => console.log('Request has completed')
@@ -69,7 +69,7 @@ constructor(private http: HttpClient, private accountService: AccountService) { 
 */
 
 
-    this.http.get('http://3.76.10.199/api/users/GeneratePairs', this.accountService.getTokenForHttpHeader()).subscribe();
+    this.http.get('http://3.71.92.233:8080/api/users/GeneratePairs', this.accountService.getTokenForHttpHeader()).subscribe();
     window.location.reload()
   }
 
